@@ -21,9 +21,9 @@ from .TalkandListen import listen
 from .TalkandListen import save_audio
 
 #User Email Address
-email_address = ''
+email_address = 'voicebasedemailtest@gmail.com'
 #User Email Password
-email_password = ''
+email_password = 'plqkmwoqcnfyswgq'
 
 #Address To Send Email To
 to_addresses = ''
@@ -41,16 +41,16 @@ mail = imaplib.IMAP4_SSL('imap.gmail.com')
 
 #Convert Special Characters In String
 def convert_special_char(text):
-    temp=text
-    special_chars = ['attherate','dot','underscore','dollar','hash','star','plus','minus','space','dash']
+    temp = text
+    special_chars = ['at', 'dot','underscore','dollar','hash','star','plus','minus','space','dash']
     for character in special_chars:
         while(True):
             pos=temp.find(character)
             if pos == -1:
                 break
             else :
-                if character == 'attherate':
-                    temp=temp.replace('attherate','@')
+                if character == 'at':
+                    temp=temp.replace('at','@')
                 elif character == 'dot':
                     temp=temp.replace('dot','.')
                 elif character == 'underscore':
@@ -81,10 +81,10 @@ def login_view(request):
         flag = True
         while (flag):
             talk("Enter your Email")
-            email_address = listen()
+            #email_address = 'voicebasedemailtest@gmail.com'
             if email_address != 'N':
                 talk("You meant " + email_address + " say yes to confirm or no to enter again")
-                say = 'yes' #listen()
+                say = listen()
                 if say == 'yes' or say == 'Yes':
                     flag = False
             else:
@@ -99,10 +99,10 @@ def login_view(request):
         flag = True
         while (flag):
             talk("Enter your password")
-            email_password = listen()
+            #email_password = 'plqkmwoqcnfyswgq'
             if email_address != 'N':
                 talk("You meant " + email_password + " say yes to confirm or no to enter again")
-                say = 'yes'
+                say = listen()
                 if say == 'yes' or say == 'Yes':
                     flag = False
             else:
@@ -136,12 +136,12 @@ def menu_view(request):
         talk(text1)
         flag = True
         while(flag):
-            talk("To compose an email say compose. To open Inbox folder say Inbox. To open Trash folder say Trash. To open Sent folder say Sent. To Logout say Logout. Do you want me to repeat?")
-            say = 'no' #listen() function
+            talk("To compose an email say compose. To open Inbox folder say Inbox. To open Sent folder say Sent. To open trash folder say trash. To Logout say Logout. Do you want me to repeat?")
+            say = listen()
             if say == "No" or say == "no":
                 flag = False
             talk("What Do You Want To Do ?")
-            action = 'sent' #listen() function
+            action = listen()
             action = action.lower()
             if action == 'compose':
                 return JsonResponse({'result' : 'compose'})
@@ -151,7 +151,7 @@ def menu_view(request):
                 return JsonResponse({'result' : 'sent'})
             elif action == 'trash':
                 return JsonResponse({'result' : 'trash'})
-            elif action == 'log out':
+            elif action == 'logout':
                 email_address = ""
                 email_password = ""
                 talk("You have been logged out of your account and now will be redirected back to the login page.")
@@ -175,18 +175,18 @@ def compose_view(request):
             while flag:
                 # Get Receiver
                 talk('Hey ' + email_address +' ! To Whom You Want To Send An Email?')
-                to = '201900294@vupune.ac.in' #listen() function
+                to = listen()
                 if to != 'N':
                     print(to)
                     talk("You have said : " + to + ". Are you sure of this recipient ?")
-                    say = 'yes' #listen() function
-                    if say == "Yes" or say =="yes":
+                    say = 'yes'
+                    if say == "Yes" or say == "yes":
                         to_address.append(to)
                         flag = False
                     else:
-                        talk("could not understand what you meant")
+                        talk("Could Not Understand What You Meant")
             talk("Do you want to enter more recipients ?  Say yes or no.")
-            say1 = 'no' #listen() function
+            say1 = 'no'
             if say1 == 'No' or say1 == 'no':
                 flag1 = False
             flag = True
@@ -196,6 +196,7 @@ def compose_view(request):
             item = item.strip()
             item = item.replace(' ', '')
             item = item.lower()
+            item = convert_special_char(item)
             new_to_addresses.append(item)
             print(item)
 
@@ -203,12 +204,12 @@ def compose_view(request):
         flag = True
         while (flag):
             talk('What Is The Subject Of Your Email ?')
-            subject = 'Test Email' #listen() function
+            subject = listen()
             if subject == 'N':
                 talk("could not understand what you meant")
             else:
-                talk("You have said : " + subject + " Are you sure of this subject ?")
-                say = 'yes' #listen() function
+                talk("You have said : " + str(subject) + " Are you sure of this subject ?")
+                say = listen()
                 if say == "yes" or say == "Yes":
                     flag = False
 
@@ -216,26 +217,26 @@ def compose_view(request):
         flag = True
         while flag:
             talk("Tell Me The Text")
-            body = 'hello, this is a test email' #listen() function
+            body = listen()
             if body == "N":
                 talk("Could Not Understand What You Meant")
             else:
                 talk("This is your message." + body + "Are You Sure You Want To Send This?")
-                say = 'yes' #listen() function
+                say = listen()
                 if say == "Yes" or say == "yes":
                     flag = False
-        email = EmailMessage()
+        email = MIMEMultipart()
         email['From'] = email_address
         email['To'] = ",".join(new_to_addresses)
         email['Subject'] = subject
-        email.set_content(body)
+        email.attach(MIMEText(body, 'plain'))
 
         # Get Attachment
         talk('Any Attachment ? Say Yes or No')
         attach = listen()
         if attach == 'yes':
             talk("Do You Want To Record An Audio And Send As An Attachment ?")
-            choice = listen()
+            choice = 'yes'
             choice = choice.lower()
             if choice == 'yes':
                 talk("Enter Filename.")
@@ -250,6 +251,7 @@ def compose_view(request):
                 while flagconf:
                     try:
                         save_audio(audio_msg, filename)
+                        print("SAVED AUDIO")
                         flagconf = False
                     except:
                         print('Trying Again')
@@ -276,7 +278,7 @@ def compose_view(request):
                 email.attach(p)
 
         try:
-            server.send_message(email)  # sender  to receiver via server.
+            server.sendmail(from_address, new_to_addresses, email.as_string())  # sender  to receiver via server.
             talk("Your email has been sent successfully. You will now be redirected to the menu page.")
         except Exception as e:
             print(e)
@@ -376,12 +378,12 @@ def get_attachment(msg):
         filename = part.get_filename()
         if bool(filename):
             # attachment_dir = listen()
-            attachment_dir = 'C:/Users/user_name/Desktop'
+            attachment_dir = 'C:/Users/hasna/Desktop'
             filepath = os.path.join(attachment_dir, filename)
             with open(filepath, "wb") as f:
                 f.write(part.get_payload(decode=True))
                 talk("Attachment has been downloaded")
-                path = 'C:/Users/user_name/Desktop/'
+                path = 'C:/Users/hasna/Desktop/'
                 files = os.listdir(path)
                 paths = [os.path.join(path, basename) for basename in files]
                 file_name = max(paths, key=os.path.getctime)

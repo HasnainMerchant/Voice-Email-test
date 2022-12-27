@@ -15,8 +15,8 @@ def listen():
         with sr.Microphone() as source:  # laptop's mic is the source for speech.
             listener.adjust_for_ambient_noise(source, duration=1)
             print('Listening...')
-            talk('Now Listening...')
-            voice = listener.listen(source)
+            talk('Now Listening')
+            voice = listener.listen(source, phrase_time_limit=None)
             info = listener.recognize_google(voice)  # speech to text function
             print(info, '\n')
             return info
