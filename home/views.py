@@ -21,9 +21,9 @@ from .TalkandListen import listen
 from .TalkandListen import save_audio
 
 #User Email Address
-email_address = 'voicebasedemailtest@gmail.com'
+email_address = ''
 #User Email Password
-email_password = 'plqkmwoqcnfyswgq'
+email_password = ''
 
 #Address To Send Email To
 to_addresses = ''
@@ -147,7 +147,7 @@ def menu_view(request):
                 return JsonResponse({'result' : 'compose'})
             elif action == 'inbox':
                 return JsonResponse({'result' : 'inbox'})
-            elif action == 'sent':
+            elif action == 'sent' or action == 'send':
                 return JsonResponse({'result' : 'sent'})
             elif action == 'trash':
                 return JsonResponse({'result' : 'trash'})
@@ -540,14 +540,15 @@ def inbox_view(request):
         talk("What Would You Like To Do ?. 1. To Read Unread Emails Say Read. 2. To Search Email Say Search. 3. To Go To Menu Page Sat Go Back. 4. To Logout Say Logout.")
         flag = True
         while flag:
-            action = "read"
+            action = listen()
             action = action.lower()
             if action == "read":
                 flag = False
                 if unread_emailnum != 0:
                     read_mails(unread_list, 'inbox') # Read mail function
                 else:
-                    talk("You Have No New or Unread Emails")
+                    talk("You Have No New or Unread Emails. Reading Old Emails")
+                    read_mails(total_mail_list, 'inbox')
             elif action == "search":
                 flag = False
                 talk("If you Want To Search Using Recipient Say Recipient or If you want to search using Subject Say Subject")
@@ -599,11 +600,13 @@ def sent_view(request):
         mail.select('"[Gmail]/Sent Mail"')
         result1, data1 = mail.search(None, "ALL")
         mail_list = data1[0].split()
-        talk("You Have Reached Your Sent Mails Folder. You Have " + str(len(mail_list)) + " Mails In Your Sent Mails Folder. To Search A Specific email Say Search. To Go Back To The Menu Page Say Back. To Logout Say Logout")
+        talk("You Have Reached Your Sent Mails Folder. You Have " + str(len(mail_list)) + " Mails In Your Sent Mails Folder. To Read All Emails say Read. To Search A Specific email Say Search. To Go Back To The Menu Page Say Back. To Logout Say Logout")
         flag = True
         while (flag):
             action = listen()
             action = action.lower()
+            if action == 'read':
+                read_mails(mail_list, 'sent')
             if action == 'search':
                 flag = False
                 emailid = ""
