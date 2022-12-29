@@ -12,6 +12,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 from email.message import EmailMessage
 from playsound import playsound
+import docx2txt
 
 # Local Files
 from .models import Details
@@ -389,8 +390,18 @@ def get_attachment(msg):
                 file_name = max(paths, key=os.path.getctime)
             with open(file_name, "rb") as f:
                 if file_name.find('.mp3') != -1:
-                    talk("Playing the downloaded audio file.")
+                    talk("The Attachment Is a Audio File. Playing the downloaded audio file.")
                     playsound(file_name)
+                if file_name.find('.txt') != -1:
+                    talk("The Attachment Is A Text File. Opening the downloaded text file.")
+                    talk(f.read())
+                if file_name.find('.pdf') != -1:
+                    talk("The Attachment is a PDF.")
+                if file_name.find('.docx') != -1 or file_name.find('doc') != -1:
+                    talk("The Attachment is a Document File. Opening the downloaded Document File.")
+                    talk(docx2txt.process(f))
+                if file_name.find('.jpg') != -1 or file_name.find('png') != -1:
+                    talk("The Attachment Is An Image.")
 
 #Function To Read All The Mails
 def read_mails(mail_list, folder):
