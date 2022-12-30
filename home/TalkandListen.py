@@ -9,7 +9,7 @@ def talk(text):
 
 # Speak Function Not Working Properly
 def listen():
-    print('INSIDE listen FNCTION')
+    # print('INSIDE listen FNCTION')
     listener = sr.Recognizer()  # to understand what the user is saying.
     try:
         with sr.Microphone() as source:  # laptop's mic is the source for speech.

@@ -39,13 +39,13 @@
 										<div class="form-outline mb-4">
 											<label class="form-label" for="form2Example11">Email</label>
 											<input type="text" id="form2Example11" class="form-control" name="email"
-												placeholder="Email" required value={{detail.email}} >
+												placeholder="Email" value={{detail.email}} required>
 										</div>
 
 										<div class="form-outline mb-4">
 											<label class="form-label" for="form2Example22">Password</label>
 											<input type="password" id="form2Example22" class="form-control"
-												placeholder="Password" required value={{detail.password}} >
+												placeholder="Password" value={{detail.password}} required >
 										</div>
 
 										<div class="text-center pt-1 mb-5 pb-1">
@@ -66,20 +66,20 @@
 							<div class="col-lg-6 d-flex align-items-center gradient-custom-2">
 								<div class="text-white px-3 py-4 p-md-5 mx-md-4">
 									<h4 class="mb-4">This is more than just a project</h4>
-									<p class="small mb-0">
-										We want to help specially gifted people through this project.
-										To add more content I am writing this line.
-										I should just add Lorem ipsum.
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-										incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-										nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+									<p class="large mb-4"><br><br>
+										We want to help specially gifted people through this project. 
+										People with unusual abilities frequently encounter particular difficulties and limitations in society. 
+										This project is not just about providing resources - it is also about building a community of support and 
+										understanding for those with extraordinary abilities, we hope you will support us in this endeavor.<br>
 										<br><br>
-										<b>Our Team: </b><br><br>
-										1. <strong>Hasnain Merchant</strong><br><br>
-										2. <strong>Rohan Dhawale</strong><br><br>
-										3. <strong>Shivani Shete</strong><br><br>
-										4. <strong>Nahid Hwaldar</strong><br><br>
-										5. <strong>Alekhya Tejomurtula</strong><br><br>
+										<strong>Our Team:</strong><br>
+											<div>
+											  <strong style="display: inline-block; width: 50%">1. Hasnain Merchant</strong>
+											  <strong style="display: inline-block; width: 45%">2. Rohan Dhawale</strong><br>
+											  <strong style="display: inline-block; width: 50%">3. Shivani Shete</strong>
+											  <strong style="display: inline-block; width: 45%">4. Nahid Hwaldar</strong><br>
+											  <strong style="display: inline-block; width: 50%">5. Alekhya Tejomurtula</strong>
+											</div>
 									</p>
 								</div>
 							</div>
@@ -89,21 +89,4 @@
 			</div>
 		</div>
 	</section>
-	<!-- <h1>VOICE BASED EMAIL FOR THE BLIND</h1>
-	<form action="login.html" method="POST">
-		<br><br>
-		<div>
-			<div class="login" id="here">
-				{% csrf_token %}
-				<h2>Email:</h2>
-				<input type="text" placeholder="Email" name="email"  value={{detail.email}} required>
-				<br><br>
-				<h2>Password: </h2>
-				<input type="password" placeholder="Password" name="password" value={{detail.password}} required>
-				<br><br><a href="home.html">
-				<input href="home.html" role="button" type="submit" value="LOGIN"></a>
-				<br>
-			</div>
-		</div>
-	</form> -->
 	{% endblock %}
