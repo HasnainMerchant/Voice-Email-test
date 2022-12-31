@@ -95,7 +95,6 @@ def login_view(request):
         email_address = email_address.replace(' ', '')
         email_address = email_address.lower()
         email_address = convert_special_char(email_address)
-        #print(email_address)
         request.email = email_address
 
         flag = True
@@ -114,7 +113,6 @@ def login_view(request):
         email_password = email_password.replace(' ', '')
         email_password = email_password.lower()
         email_password = convert_special_char(email_password)
-        #print(email_password)
 
         try:
             mail.login(email_address, email_password)
@@ -139,7 +137,7 @@ def menu_view(request):
         talk(text1)
         flag = True
         while(flag):
-            talk("To compose an email say compose. To open Inbox folder say Inbox. To open Sent folder say Sent. To open trash folder say trash. To Logout say Logout. Do you want me to repeat?")
+            talk("To Compose An Email Say Compose. To Open Inbox Folder Say Inbox. To Open Sent Folder Say Sent. To Open Trash Folder Say Trash. To Logout Say Logout. Do you want me to repeat ?.")
             say = listen()
             if say == "No" or say == "no":
                 flag = False
@@ -160,10 +158,10 @@ def menu_view(request):
             elif action == 'logout':
                 email_address = ""
                 email_password = ""
-                talk("You have been logged out of your account and now will be redirected back to the login page. Click Anywhere On The Screen To Continue.")
+                talk("You Have Been Logged Out Of Your Account And Will Now Be Redirected Back To The Login Page. Click Anywhere On The Screen To Continue.")
                 return JsonResponse({'result': 'logout'})
             else:
-                talk("Invalid action. Please try again.")
+                talk("Invalid Action. Click Anywhere To Try Again.")
                 return JsonResponse({'result': 'failure'})
     return render(request, 'menu.html')
 
@@ -189,7 +187,7 @@ def compose_view(request):
                         to_address.append(to)
                         flag = False
                     else:
-                        talk("Could Not Understand What You Meant")
+                        talk("Could Not Understand What You Meant. Enter Email Again.")
             talk("Do you want to enter more recipients ?  Say yes or no.")
             say1 = listen()
             if say1 == 'No' or say1 == 'no':
@@ -203,7 +201,6 @@ def compose_view(request):
             item = item.lower()
             item = convert_special_char(item)
             new_to_addresses.append(item)
-            # print(item)
 
         # Get Subject
         flag = True
@@ -211,7 +208,7 @@ def compose_view(request):
             talk('What Is The Subject Of Your Email ?')
             subject = listen()
             if subject == 'N':
-                talk("could not understand what you meant")
+                talk("could not understand what you meant. Enter Your Subject Again.")
             else:
                 talk("You have said : " + str(subject) + " Are you sure of this subject ?")
                 say = listen()
@@ -221,34 +218,34 @@ def compose_view(request):
         #Get Email Body
         flag = True
         while flag:
-            talk("Tell Me The Text")
+            talk("Tell Me The Body Of The Email.")
             body = listen()
             if body == "N":
-                talk("Could Not Understand What You Meant")
+                talk("Could Not Understand What You Meant. Enter Your Body Again.")
             else:
-                talk("This is your message." + body + "Are You Sure You Want To Send This?")
+                talk("This is your message." + body + "Are You Sure You Want To Send This ?")
                 say = listen()
                 if say == "Yes" or say == "yes":
                     flag = False
         email = MIMEMultipart()
+        #Email Headers (RFC 822 Standard)
         email['From'] = email_address
         email['To'] = ",".join(new_to_addresses)
         email['Subject'] = subject
         email.attach(MIMEText(body, 'plain'))
 
         # Get Attachment
-        talk('Any Attachment ? Say Yes or No')
+        talk('Do you want to attach Any Attachment ? Say Yes or No')
         attach = listen()
         if attach == 'yes':
             talk("Do You Want To Record An Audio And Send As An Attachment ?")
             choice = listen()
             if choice == 'yes':
-                talk("Enter Filename.")
+                talk("Enter Filename for Audio File.")
                 filename = listen()
                 filename = filename.lower()
                 filename = filename + '.mp3'
                 filename = filename.replace(' ', '')
-                # print(filename)
                 talk("Enter Your Audio Message.")
                 audio_msg = listen()
                 flagconf = True
@@ -270,13 +267,13 @@ def compose_view(request):
             elif choice == 'no':
                 flag = True
                 while flag:
-                    talk("Enter Filename With Extension")
+                    talk("Enter Filename You Want To Attach With Extension")
                     filename = listen()
                     filename = filename.strip()
                     filename = filename.replace(' ', '')
                     filename = filename.lower()
                     filename = convert_special_char(filename)
-                    talk("Did You Say" + str(filename) + "?. Are You Sure ?. Say Yes to Continue or No To Enter Again.")
+                    talk("Did You Say" + str(filename) + "? Are You Sure ? Say Yes to Continue or No To Enter Again.")
                     ans = listen()
                     if ans == 'yes':
                         flag = False
@@ -296,7 +293,7 @@ def compose_view(request):
             talk("Your email has been sent successfully. You will now be redirected to the menu page. Click Anywhere On The Screen To Continue.")
         except Exception as e:
             print(e)
-            talk("Sorry. We couldn't send your email. You will now be redirected to the menu page. Click Anywhere On The Screen To Continue.")
+            talk("Sorry. We couldn't send your email. You will now be redirected to the menu page. Click Anywhere On The Screen To Try Again.")
             return JsonResponse({'result': 'failure'})
         server.quit()
         return JsonResponse({'result' : 'success'})
@@ -326,16 +323,15 @@ def reply_to_email(msg_id, message):
     msg.add_header('In-Reply-To', msg_id)
     flag = True
     while(flag):
-        talk("Enter body.")
+        talk("Enter Body for the Email.")
         body = listen()
-        print(body)
         try:
             msg.attach(MIMEText(body, 'plain'))
             server.sendmail(msg['from'], msg['to'], msg.as_string())
-            talk("Your reply has been sent successfully.")
+            talk("Your Reply Has Been Sent Successfully.")
             flag = False
         except:
-            talk("Your reply could not be sent. Do you want to try again? Say yes or no.")
+            talk("Your reply could not be sent. Do you want to try again ? Say yes or no.")
             act = talk()
             if act != 'yes':
                 flag = False
@@ -349,11 +345,11 @@ def forward_email(item, message):
     while flag:
         while flag1:
             while True:
-                talk("Enter receiver's email address")
+                talk("Enter Receiver's Email Address")
                 to = listen()
                 talk("You meant " + to + " say yes to confirm or no to enter again")
                 yn = listen()
-                if yn == 'yes':
+                if yn == 'yes' or yn == 'Yes':
                     to = to.strip()
                     to = to.replace(' ', '')
                     to = to.lower()
@@ -362,17 +358,17 @@ def forward_email(item, message):
                     break
             talk("Do you want to add more recipients?")
             ans1 = listen()
-            if ans1 == "no" :
+            if ans1 == "no" or ans1 == 'No':
                 flag1 = False
 
         message['From'] = email_address
         message['To'] = ",".join(new_to_address)
         try:
             server.sendmail(email_address, new_to_address, message.as_string())
-            talk("Your mail has been forwarded successfully.")
+            talk("Your Mail Has Been Forwarded Successfully.")
             flag = False
         except:
-            talk("Your mail could not be forwarded. Do you want to try again? Say yes or no.")
+            talk("Your Mail Could Not Be Forwarded. Do you want to try again ? Say yes or no.")
             act = listen()
             if act != 'yes':
                 flag = False
@@ -428,14 +424,14 @@ def read_mails(mail_list, folder):
         From = message['From']
         Subject = message['Subject']
         Msg_id = message['Message-ID']
-        talk("Email number " + str(mail_count + 1) + "    .The mail is from " + From + " to " + To + "  . The subject of the mail is " + Subject)
+        talk("Email number " + str(mail_count + 1) + " The mail is from " + From + " to " + To + " And The subject of the mail is " + Subject)
+        to_read_list.append(Msg_id)
+        mail_count = mail_count + 1
         print('message id= ', Msg_id)
         print('From :', From)
         print('To :', To)
         print('Subject :', Subject)
         print("\n")
-        to_read_list.append(Msg_id)
-        mail_count = mail_count + 1
 
     flag = True
     while flag :
@@ -459,14 +455,14 @@ def read_mails(mail_list, folder):
         From = message['From']
         Subject = message['Subject']
         Msg_id = message['Message-ID']
-        print('From :', From)
-        print('To :', To)
-        print('Subject :', Subject)
-        talk("The mail is from " + From + " to " + To + "  . The subject of the mail is " + Subject)
+        talk("The mail is from " + From + " to " + To + ". The subject of the mail is " + Subject)
         Body = get_body(message)
         Body = Body.decode()
         Body = re.sub('<.*?>', '', Body)
         Body = os.linesep.join([s for s in Body.splitlines() if s])
+        print('From :', From)
+        print('To :', To)
+        print('Subject :', Subject)
         if Body != '':
             print("Body: " + Body)
             talk("The Body Of The Mail Is." + Body)
@@ -477,44 +473,42 @@ def read_mails(mail_list, folder):
         get_attachment(message)
 
         if folder == 'inbox':
-            talk("Do you want to reply to this mail? Say yes or no. ")
+            talk("Do you want to reply to this mail ? Say yes or no. ")
             ans = listen()
             if ans == "yes":
                 reply_to_email(Msg_id, message)
 
         if folder == 'inbox' or folder == 'sent':
-            talk("Do you want to forward this mail to anyone? Say yes or no. ")
+            talk("Do you want to forward this mail to anyone ? Say yes or no. ")
             ans = listen()
             if ans == "yes":
                 forward_email(Msg_id, message)
 
 
         if folder == 'inbox' or folder == 'sent':
-            talk("Do you want to delete this mail? Say yes or no. ")
+            talk("Do you want to delete this mail ? Say yes or no. ")
             ans = listen()
             if ans == "yes":
                 try:
                     mail.store(data, '+X-GM-LABELS', '\\Trash')
                     mail.expunge()
                     talk("The mail has been deleted successfully.")
-                    print("mail deleted")
                 except:
                     talk("Sorry, could not delete this mail. Please try again later.")
 
         if folder == 'trash':
-            talk("Do you want to delete this mail? Say yes or no. ")
+            talk("Do you want to delete this mail ? Say yes or no. ")
             ans = listen()
             if ans == "yes":
                 try:
                     mail.store(data, '+FLAGS', '\\Deleted')
                     mail.expunge()
                     talk("The mail has been deleted permanently.")
-                    print("mail deleted")
                 except:
                     talk("Sorry, could not delete this mail. Please try again later.")
 
         talk("Email ends here.")
-        talk("Do you want to read more mails?")
+        talk("Do you want to read more mails? Say Yes to Continue or No to Go Back")
         ans = listen()
         if ans == "no":
             flag = False
@@ -574,27 +568,25 @@ def inbox_view(request):
                 search_specific_mail('INBOX', 'FROM', email_id, 'inbox')
 
             elif action == "back":
-                talk("You will no be redirected to the Menu Page")
-                mail.logout()
+                talk("You will be redirected to the Menu Page. Click Anywhere to Continue.")
                 return JsonResponse({'result': 'success'})
             elif action == 'logout':
                 email_address = ""
                 email_password = ""
-                talk("You have been logged out of your account and now will be redirected back to the login page.")
+                mail.logout()
+                talk("You have been logged out of your account and now will be redirected back to the login page. Click anywhere to continue.")
                 return JsonResponse({'result': 'logout'})
             else:
-                talk("Invalid Action. Please Try Again")
+                talk("Invalid Action. Click anywhere To try Again.")
 
-            talk("If you wish to do anything else in the inbox of your mail say yes or say back to go back.")
+            talk("If you wish to do anything else in the inbox of your mail say yes or say back to go back to the menu page.")
             ans = listen()
             ans = ans.lower()
             if ans == 'yes':
                 flag = True
-                talk("Enter your desired action. Say Read To Read The Mails, Search To Search For A Specific Mail, Back to Go Back to The Menu Page or Logout to Logout. ")
+                talk("Enter your desired action. Say Read To Read The Mails, Say Search To Search For A Specific Mail, Say Back to Go Back to The Menu Page or Say Logout to Logout. ")
             return JsonResponse({'result': 'success'})
     return render(request, 'inbox.html')
-
-#Sent Page Code
 
 #Sent Page Code
 def sent_view(request):
@@ -629,28 +621,25 @@ def sent_view(request):
                 search_specific_mail('"[Gmail]/Sent Mail"', 'TO', emailid,'sent')
 
             elif action == 'back':
-                talk("You Will Now Be Redirected To The Menu Page.")
-                mail.logout()
+                talk("You Will Now Be Redirected To The Menu Page. Click Anywhere to Continue.")
                 return JsonResponse({'result': 'success'})
 
             elif action == 'logout':
                 email_address = ""
                 email_password = ""
-                talk("You Have Been Logged Out Of Your Account And Now Will Be Redirected Back To The Login Page.")
+                mail.logout()
+                talk("You Have Been Logged Out Of Your Account And Now Will Be Redirected Back To The Login Page. Click Anywhere To Continue.")
                 return JsonResponse({'result': 'logout'})
 
             else:
-                talk("Invalid Action. Please Try Again.")
+                talk("Invalid Action. Click Anywhere To Try Again.")
 
-            talk("If You Wish To Do Anything Else In The Sent Mails Folder. Say Yes Or Else Say No to Logout.")
+            talk("If You Wish To Do Anything Else In The Sent Mails Folder. Say Yes Or Else Say Back To Go Back.")
             ans = listen()
             if ans == 'yes':
                 flag = True
-        mail.logout()
         talk("You Will Now Be Redirected To The Menu Page.")
-        mail.logout()
         return JsonResponse({'result': 'success'})
-
     elif request.method == 'GET':
         return render(request, 'sent.html')
 
@@ -662,12 +651,14 @@ def trash_view(request):
         result1, data1 = mail.search(None, "ALL")
         mail_list = data1[0].split()
         flag = True
-        talk(text)
+        talk("This is The Trash Folder. You have " + len(mail_list) +" Deleted Emails in your trash Folder. To Read Your Trash Emails say Read. " + 
+        "To Search A specific Email say Search. To Go back to The Menu Page say back. To Logout say Logout")
         flag = True
         while (flag):
             action = listen()
-            if action == 'search':
+            if action == 'read':
                 flag = False
+                read_mails(mail_list, 'trash')
             if action == 'search':
                 flag = False
                 email_id = ""
@@ -681,30 +672,27 @@ def trash_view(request):
                 email_id = email_id.strip()
                 email_id = email_id.replace(' ', '')
                 email_id = email_id.lower()
-
+                email_id = convert_special_char(email_id)
                 search_specific_mail('"[Gmail]/Trash"', 'FROM', email_id, 'trash')
 
             elif action == 'back':
-                talk("You will now be redirected to the menu page.")
-                mail.logout()
+                talk("You will now be redirected to the menu page. Click Anywhere To Continue.")
                 return JsonResponse({'result': 'success'})
 
-            elif action == 'log out':
+            elif action == 'logout':
                 email_address = ""
                 email_password = ""
-                talk("You have been logged out of your account and now will be redirected back to the login page.")
+                mail.logout()
+                talk("You have been logged out of your account and now will be redirected back to the login page. Click Anywhere To Continue")
                 return JsonResponse({'result': 'logout'})
 
             else:
-                talk("Invalid action. Please try again.")
+                talk("Invalid action. Click Anywhere to try again.")
 
             talk("If you wish to do anything else in the trash folder say yes or else to logout say no.")
             ans = listen()
             if ans == 'yes':
                 flag = True
         talk("You will now be redirected to the menu page.")
-
-        talk("You will now be redirected to the menu page.")
-        mail.logout()
         return JsonResponse({'result': 'success'})
     return render(request, 'trash.html')
